@@ -1,0 +1,20 @@
+{
+  "name": "Gedeon Aurora",
+  "short_name": "Gedeon",
+  "description": "Личный ИИ-ассистент Gedeon: голос, финансы, задачи и трекер жизни",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0614",
+  "theme_color": "#0a0614",
+  "categories": ["productivity", "lifestyle", "finance"],
+  "lang": "ru-RU",
+  "icons": [
+    {"src": "icons/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any"},
+    {"src": "icons/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable"}
+  ],
+  "shortcuts": [
+    {"name": "Голос", "short_name": "🎙", "url": "./#voice", "icons": [{"src": "icons/icon-192.svg", "sizes": "192x192"}]},
+    {"name": "Финансы", "short_name": "💰", "url": "./#fin", "icons": [{"src": "icons/icon-192.svg", "sizes": "192x192"}]}
+  ]
+}
