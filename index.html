@@ -167,7 +167,7 @@ select{appearance:none}
 .mc s{font-size:10px;color:var(--acc);text-decoration:none;font-family:var(--mono)}
 .mc s.plus{color:var(--grn)}
 .ai{background:linear-gradient(135deg,rgba(192,132,252,.14),rgba(244,114,182,.07));border:1px solid rgba(192,132,252,.3);border-radius:18px;padding:15px;margin-bottom:14px;display:flex;gap:12px}
-.ai.gemini{background:linear-gradient(135deg,rgba(167,139,250,.18),rgba(99,102,241,.1));border-color:rgba(167,139,250,.45)}
+.ai.gemini{background:linear-gradient(135deg,rgba(167,139,250,.18),rgba(99,102,241,.15));border-color:rgba(167,139,250,.45)}
 .ai .ic2{font-size:20px;flex-shrink:0}.ai .t{font-size:11px;font-weight:700;color:var(--acc);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
 .ai.gemini .t{color:#a78bfa}
 .ai .b{font-size:13px;line-height:1.55}
@@ -264,7 +264,7 @@ select{appearance:none}
 </select>
 <input id="aiCustom" style="display:none;margin-top:8px" placeholder="точный ID модели из списка" autocomplete="off"></div>
 <div class="trow"><span>ИИ-анализ и умный голос</span><input type="checkbox" id="aiOn" style="width:24px;height:24px;accent-color:var(--acc)"></div>
-<div class="hint" style="margin-top:8px">Кнопка «📡 Живой список» ниже покажет все модели, доступные твоему ключу прямо сейчас — тапни любую, и она станет основной. Если модель устареет или упрётся в лимит, Gedeon сам переключится на рабочую.</div>
+<div class="hint" style="margin-top:8px">Кнопка «📡 Живой список» ниже покажет все модели, доступные твоему ключу прямо сейчас — тапни любую, и она станет основной. Если модель устареет или упрётся в лимит, Gedeon сам переключится на рабочую и запомнит её.</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
 <button class="btn ghost" onclick="saveAI()">Сохранить</button>
 <button class="btn ghost" onclick="testAI()">🧪 Тест связи</button></div>
@@ -328,6 +328,7 @@ let S;function load(){let d=null;try{d=JSON.parse(localStorage.getItem('jarvis_a
  d.settings.pitch=d.settings.pitch||0.85;d.settings.voiceId=d.settings.voiceId||'';
  d.profile=d.profile||{first:'',last:''};d.pin=d.pin||'3119';
  d.ai=Object.assign({key:'',model:'gemini-flash-latest',on:true},d.ai||{});
+ if(d.ai.gcKey&&!d.ai.key)d.ai.key='';
  d.fin_cat.forEach(c=>{if(CAT_COLORS[c.id])c.c=CAT_COLORS[c.id];if(!c.c)c.c='#94a3b8'});
  d.tasks.forEach(t=>{t.sub=t.sub||[];if(!t.date)t.date=t.deadline||null;delete t.deadline;t.doneDate=t.doneDate||null});
  return d}
@@ -472,8 +473,7 @@ async function fetchModels(){
   if(!res.ok)throw new Error((j.error&&j.error.message)||('HTTP '+res.status));
   const list=(j.models||[]).filter(m=>/^models\/gemini/.test(m.name||'')&&(m.supportedGenerationMethods||['generateContent']).includes('generateContent'));
   if(!list.length)throw new Error('список пуст');
-  openModal('<h3>📡 Модели Gemini</h3><div class="w" style="box-shadow:none;margin:0">'+list.map(m=>{const id=m.name.replace('models/','');
-   return `<div class="trow" data-model="${esc(id)}" style="cursor:pointer"><div class="cat"><div class="ci">🧠</div><div class="info"><span>${esc(m.displayName||id)}</span><small>${esc(id)}${S.ai.model===id?' · текущая':''}</small></div></div></div>`}).join('')+'</div><div class="hint" style="margin-top:10px">Тапни модель — она станет основной. Список живой, прямо с серверов Google.</div>');
+  openModal('<h3>📡 Модели Gemini</h3><div class="w" style="box-shadow:none;margin:0">'+list.map(m=>{const id=m.name.replace('models/','');return '<div class="trow" data-model="'+id+'" style="cursor:pointer"><div class="cat"><div class="ci">🧠</div><div class="info"><span>'+esc(m.displayName||id)+'</span><small>'+id+(S.ai.model===id?' · текущая':'')+'</small></div></div></div>'}).join('')+'</div><div class="hint" style="margin-top:10px">Тапни модель — она станет основной. Список живой, прямо с серверов Google.</div>');
   $('#modalBox').querySelectorAll('[data-model]').forEach(r=>r.onclick=()=>{S.ai.model=r.dataset.model;save();updateAiStatus();closeModal();toast('Модель: '+S.ai.model,'🧠')});
  }catch(e){
   openModal('<h3>📡 Модели</h3><div class="hint">Ошибка: '+esc(e.message)+'</div><button class="btn ghost" style="margin-top:12px" onclick="closeModal()">Закрыть</button>');
